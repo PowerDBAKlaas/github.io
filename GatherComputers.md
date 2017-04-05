@@ -10,9 +10,11 @@ I'll show you some easy methods right away:
 ## Parameter ComputerName
 
 Lots of existing cmdlets since PS V2 have a -ComputerName parameter. You can submit one or more computers to it:
+:powershell:
 ```powershell
 PS> Get-WSManInstance -ResourceURI winrm/config/client -ComputerName SQL1
 ```
+:powershell:
 ```powershell
 PS> Get-WSManInstance -ResourceURI winrm/config/client -ComputerName SQL1,SQL2,SQL3
 ```
@@ -21,6 +23,7 @@ PS> Get-WSManInstance -ResourceURI winrm/config/client -ComputerName SQL1,SQL2,S
  
 If a cmdlet or function accepts pipeline input for the computer name, here's the way we use it:
 
+:powershell:
 ```powershell
 PS> 'SQL1','SQL2','SQL3','FakeSQL4' | Get-WSManInstance -ResourceURI winrm/config/client
 ```
@@ -30,6 +33,7 @@ PS> 'SQL1','SQL2','SQL3','FakeSQL4' | Get-WSManInstance -ResourceURI winrm/confi
 
 The code to collect the computer names we want, is provided to the pipeline:
 
+:powershell:
 ```powershell
 PS> Get-ADComputer -SearchBase "OU=Central servers,OU=Computers MyCompany,DC=MYCOMPANY,DC=COM" -Filter "name -like 'SQL*'" | select -ExpandProperty name  | Get-WSManInstance -ResourceURI winrm/config/client
 ```
@@ -37,6 +41,7 @@ PS> Get-ADComputer -SearchBase "OU=Central servers,OU=Computers MyCompany,DC=MYC
 
 We can also put that part of the code at the -ComputerName parameter and wrap it in parentheses.
 
+:powershell:
 ```powershell
 PS> Get-WSManInstance -ResourceURI winrm/config/client -ComputerName $(Get-ADComputer -SearchBase "OU=Central servers,OU=Computers MyCompany,DC=MYCOMPANY,DC=COM" -Filter "name -like 'SQL*'" | select -ExpandProperty name)
 ```
@@ -45,6 +50,7 @@ PS> Get-WSManInstance -ResourceURI winrm/config/client -ComputerName $(Get-ADCom
 
 To avoid summing up all your computers of interest, it can be handy to keep the list in a variable:
 
+:powershell:
 ```powershell
 PS> $MyComputers = 'SQL1','SQL2','SQL3','FakeSQL4'
 
@@ -58,6 +64,7 @@ SQL1
 SQL2  
 SQL3  
 
+:powershell:
 ```powershell
 PS> $MyComputers = Get-Content -Path 'C:\MyDirectory\SQLHosts.txt'
 
@@ -73,6 +80,7 @@ PS> Get-WSManInstance -ResourceURI winrm/config/client -ComputerName $MyComputer
 |SQL2| Instance2K12 | Test |
 |SQL3| Instance2K8R2 | Production |
 
+:powershell:
 ```powershell
 PS> $MyComputers = Import-Csv -Path 'C:\MyDirectory\SQLInstances.csv' | select ComputerName
 
@@ -83,6 +91,7 @@ PS> Get-WSManInstance -ResourceURI winrm/config/client -ComputerName $MyComputer
 
 When you're on a Domain Controller (bad idea!) or you have installed RSAT on your work station and activated the necesary features, you can use the AD-cmdlets.
 
+:powershell:
 ```powershell
 PS> $MyComputers = Get-ADComputer -SearchBase "OU=Central servers,OU=Computers MyCompany,DC=MYCOMPANY,DC=COM" -Filter "name -like 'SQL*'" | select -ExpandProperty name
 
@@ -93,6 +102,7 @@ PS> Get-WSManInstance -ResourceURI winrm/config/client -ComputerName $MyComputer
 
 In the dbatools module, there is a function that gets the servernames from a Central Management Server:
 
+:powershell:
 ```powershell
 PS> $MyComputers = Get-DbaRegisteredServerName -SqlInstance MyCMS
 
@@ -101,6 +111,7 @@ PS> Get-WSManInstance -ResourceURI winrm/config/client -ComputerName $MyComputer
 
 ### from a database
 
+:powershell:
 ```powershell
 PS> $MyComputers = Invoke-Sqlcmd -ServerInstance 'MyPrecious' -Database sqlinfodb -Query "select hostName from dbo.hosts;" | select -ExpandProperty hostName
 
